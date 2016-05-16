@@ -1,0 +1,13 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# secret info
+token.yml
+
+# Distribution / packaging
+venv/
+env/
+bin/
+build/
+

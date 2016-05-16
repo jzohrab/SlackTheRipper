@@ -1,0 +1,5 @@
+# Usage:
+#   $ make init
+
+PyYAML==3.11
+slacker
