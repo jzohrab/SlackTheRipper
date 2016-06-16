@@ -52,8 +52,26 @@ def rip(flags):
     msgs = []
     _do_rip(slack, history_provider, channel_id, oldest, latest, udict, msgs)
 
-    msgs.reverse()
-    return msgs
+    # print msgs
+
+    if msgs == []:
+        return msgs
+
+    m = msgs.pop()
+    final_msgs = [ [m[0], m[1]] ]
+    while len(msgs) > 0:
+        m = msgs.pop()
+        # import pdb; pdb.set_trace()
+        if final_msgs[-1][0] != m[0]:
+            final_msgs.append([m[0], m[1]])
+        else:
+            s = final_msgs[-1][1]
+            if not s.endswith('.'):
+                s += '.'
+            final_msgs[-1] = [m[0], s + '  ' + m[1]]
+        # msgs = []
+
+    return final_msgs
 
 
 def _do_rip(slack, ch, ch_id, oldest, latest, udict, msgs = []):
