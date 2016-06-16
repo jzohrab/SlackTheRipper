@@ -36,6 +36,8 @@ Run it from the command line, with some args:
 
 ```
 python rip.py --help
+python rip.py -c general    # From a channel
+python rip.py -c slackbot   # From a user
 ```
 
 

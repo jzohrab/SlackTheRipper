@@ -32,11 +32,25 @@ def rip(flags):
     udict = {}
     for id, name in [(u['id'], u['name']) for u in users]:
         udict[str(id)] = str(name)
-    ch = slacker.Channels(token = private_token)
-    ch_id = ch.get_channel_id(flags.channel)
+    inv_udict = {v: k for k, v in udict.iteritems()}
+
+    history_provider = slacker.Channels(token = private_token)
+    channel_id = history_provider.get_channel_id(flags.channel)
+
+    if channel_id is None:
+        history_provider = slacker.IM(token = private_token)
+        ims = history_provider.list().body['ims']
+        im_dict = {}
+        for imid, userid in [(i['id'], i['user']) for i in ims]:
+            im_dict[userid] = imid
+        channel_id = im_dict[inv_udict[flags.channel]]
+
+    if channel_id is None:
+        print 'Don''t know channel {0}.'.format(flags.channel)
+        sys.exit(1)
 
     msgs = []
-    _do_rip(slack, ch, ch_id, oldest, latest, udict, msgs)
+    _do_rip(slack, history_provider, channel_id, oldest, latest, udict, msgs)
 
     msgs.reverse()
     return msgs
@@ -122,7 +136,7 @@ def parse_args(command_line_args):
                      default='./token.yml')
   _parser.add_option('-c', '--channel',
                      dest='channel',
-                     help='channel to rip (e.g., \'general\')',
+                     help='channel/DM to rip (e.g., \'general\', \'slackbot\')',
                      default='general')
   _parser.add_option('-s', '--start',
                      dest='startdate',
